@@ -19,6 +19,7 @@ export default function TaskList() {
               title={task.title}
               status={task.status}
               createdAt={task.createdAt}
+              id={task.id}
             />
           ))}
         </tbody>
