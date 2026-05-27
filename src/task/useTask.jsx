@@ -10,10 +10,6 @@ export default function useTask() {
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {
-    console.log(taskList);
-  }, [taskList]);
-
   async function addTask(taskObj) {
     try {
       const response = await fetch(`${url}/tasks`, {
@@ -29,13 +25,26 @@ export default function useTask() {
         throw new Error("Ops c'è stato un errore");
       }
     } catch (error) {
-      return {
-        success: false,
-        message: error.message || "Impossibile connettersi al server",
-      };
+      throw error;
     }
   }
-  function removeTask(id) {}
+  async function removeTask(taskId) {
+    try {
+      const response = await fetch(`${url}/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+      });
+      const data = await response.json();
+      if (data.success) {
+        const updatedList = taskList.filter((task) => task.id !== taskId);
+        setTaskList(updatedList);
+      } else {
+        throw new Error("Task non eliminata");
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
   function updateTask(id) {}
   return { addTask, removeTask, updateTask, taskList };
 }

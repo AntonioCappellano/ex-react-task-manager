@@ -33,6 +33,7 @@ export default function AddTask() {
     };
     try {
       await addTask(taskObj);
+      alert("Task aggiunta");
       setTaskName("");
       textAreaRef.current.value = "";
       selectedRef.current.value = "To do";
