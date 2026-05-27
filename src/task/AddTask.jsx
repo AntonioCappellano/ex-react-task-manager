@@ -1,10 +1,12 @@
 import { useState, useRef } from "react";
+import { useTaskList } from "../contexts/GlobalContext";
 
 export default function AddTask() {
   const [taskName, setTaskName] = useState("");
   const textAreaRef = useRef();
   const selectedRef = useRef();
   const [error, setError] = useState("");
+  const { addTask } = useTaskList();
 
   const symbols = `!@#$%^&*()-_=+[]{}|;:'\\",.<>?/\`~`;
 
@@ -18,7 +20,7 @@ export default function AddTask() {
       setTaskName(value);
     }
   }
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (taskName === "") {
       setError("Il campo non può essere vuoto");
@@ -29,7 +31,14 @@ export default function AddTask() {
       description: textAreaRef.current.value,
       status: selectedRef.current.value,
     };
-    console.log(taskObj);
+    try {
+      await addTask(taskObj);
+      setTaskName("");
+      textAreaRef.current.value = "";
+      selectedRef.current.value = "To do";
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
@@ -40,7 +49,7 @@ export default function AddTask() {
           <div className="mb-2">
             <label className="form-label mt-2">Nome del Task</label>
             <input
-              className={` form-control ${error ? "is-invalid" : ""}`}
+              className={`form-control ${error ? "is-invalid" : ""}`}
               type="text"
               value={taskName}
               onChange={(e) => handleTaskName(e.target.value)}
