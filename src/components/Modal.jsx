@@ -20,7 +20,7 @@ export default function Modal({
               <h5>{title}</h5>
             </div>
             <div className="modal-body">
-              <p>{content}</p>
+              <div>{content}</div>
             </div>
             <div className="modal-footer">
               <button className="btn btn-danger" onClick={onClose}>

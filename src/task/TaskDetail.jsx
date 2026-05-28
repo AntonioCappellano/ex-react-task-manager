@@ -2,12 +2,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTaskList } from "../contexts/GlobalContext";
 import Modal from "../components/Modal";
 import { useState } from "react";
+import EditTaskModal from "../components/EditTaskModal";
 
 export default function TaskDetail() {
   const { id } = useParams();
-  const { taskList, removeTask } = useTaskList();
+  const { taskList, removeTask, updateTask } = useTaskList();
   const navigate = useNavigate();
   const taskFind = taskList.find((task) => task.id === Number(id));
+  const [modifyTask, setModifyTask] = useState(false);
 
   const [isModal, setIsModal] = useState(false);
 
@@ -20,6 +22,16 @@ export default function TaskDetail() {
       await removeTask(Number(id));
       alert("Task Eliminata");
       navigate("/");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  async function handleSaveTask(modifyTask) {
+    try {
+      await updateTask(modifyTask);
+      alert("Task modificata");
+      setModifyTask(false);
     } catch (error) {
       alert(error.message);
     }
@@ -60,6 +72,15 @@ export default function TaskDetail() {
         <button className="btn btn-danger" onClick={handleDelete}>
           Elimina Task
         </button>
+        <button className="btn btn-primary m-2" onClick={() => setModifyTask(true)}>
+          Modifica
+        </button>
+        <EditTaskModal
+          show={modifyTask}
+          onClose={() => setModifyTask(false)}
+          task={taskFind}
+          onSave={handleSaveTask}
+        />
       </div>
     </div>
   );

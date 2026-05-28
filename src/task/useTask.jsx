@@ -45,6 +45,29 @@ export default function useTask() {
       throw error;
     }
   }
-  function updateTask(id) {}
+  async function updateTask(updatedTask) {
+    try {
+      const response = await fetch(`${url}/tasks/${updatedTask.id}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        const modifyTask = taskList.map((task) => {
+          if (task.id === updatedTask.id) {
+            return data.task;
+          }
+          return task;
+        });
+        setTaskList(modifyTask);
+      } else {
+        throw new Error("La task non può essere modificata");
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
   return { addTask, removeTask, updateTask, taskList };
 }
